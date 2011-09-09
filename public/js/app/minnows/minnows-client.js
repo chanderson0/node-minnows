@@ -102,12 +102,13 @@ define(function(require) {
       return rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping * 100) / 100 + ' ' + Math.round(serverDelta() * 100) / 100;
     };
   };
-  processTime = function(earlier, ts) {
-    var delta, newerNow, rtt;
-    newerNow = +new Date();
-    rtt = newerNow - earlier;
+  processTime = function(earlier, server) {
+    var delta, now, rtt;
+    now = +new Date();
+    rtt = now - earlier;
     ping = rtt / 2.0;
-    delta = earlier - ts + ping;
+    delta = now - server + ping;
+    console.log(now, earlier, server, ping, delta);
     return serverOffset.push(delta);
   };
   socket = io.connect();

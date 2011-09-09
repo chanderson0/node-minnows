@@ -87,13 +87,14 @@ define (require) ->
       game.tick serverTime(), draw
       rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping*100)/100 + ' ' + Math.round(serverDelta()*100)/100
 
-  processTime = (earlier, ts) ->
-    newerNow = +new Date()
+  processTime = (earlier, server) ->
+    now = +new Date()
 
-    rtt = newerNow - earlier
+    rtt = now - earlier
     ping = rtt / 2.0
-
-    delta = earlier - ts + ping
+    delta = now - server + ping
+    
+    console.log now, earlier, server, ping, delta
     serverOffset.push delta
 
   # SOCKET STUFF

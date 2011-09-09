@@ -1,0 +1,17 @@
+body {
+  background-color: #999;
+}
+
+#game {
+  width: 576px;
+  height: 384px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -288px;
+  margin-top: -192px;
+
+  background-color: #333;
+
+  box-shadow: 4px 4px 5px #777;
+}

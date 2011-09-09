@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <title>Minnows</title>
+
+  <link rel="stylesheet" href="/css/minnows.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script>/*cowboy-jquery-cdn-fallback*/window.jQuery||(function(c,a,b){a=c.scripts;a=a[a.length-2];b=a.src.match(/\/(\d+\.\d+)(\.0)?(\.\d+)?\/jquery(\.min)?\.js$/);b&&c.write('<script src="http://code.jquery.com/jquery-'+b[1]+(b[3]||"")+(b[4]||"")+'.js"><\/script>')})(document)</script>
+  
+  
+  <script src="/js/underscore.min.js"></script>
+  <!--<script src="/js/paper.dev.js"></script>-->
+  <script src="/socket.io/socket.io.js"></script>
+  
+<!--
+  <script src="/js/minnows-client-code.js"></script>
+-->
+
+  <script data-main="/js/app/client" src="/js/require.js"></script>
+</html>
+
+<body>
+  <div id="game">
+    <canvas id="game-canvas" height="384" width="576"></canvas>
+  </div>
+  
+  
+</body>
+</html>

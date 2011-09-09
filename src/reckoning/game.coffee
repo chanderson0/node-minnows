@@ -74,8 +74,9 @@ define (require) ->
         @accumulator -= @timeStep
 
       if draw?
-        interpState = @interpolate()
-        draw(interpState)
+        # interpState = @interpolate()
+        # draw(interpState)
+        draw(@history.get(@frame - 8))
 
     interpolate: () ->
       alpha = @accumulator / @timeStep

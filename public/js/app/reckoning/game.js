@@ -54,7 +54,7 @@ define(function(require) {
       return this.frame = stopFrame;
     };
     Game.prototype.tick = function(now, draw) {
-      var diff, interpState, newState;
+      var diff, newState;
       if (now == null) {
         now = null;
       }
@@ -80,8 +80,7 @@ define(function(require) {
         this.accumulator -= this.timeStep;
       }
       if (draw != null) {
-        interpState = this.interpolate();
-        return draw(interpState);
+        return draw(this.history.get(this.frame - 8));
       }
     };
     Game.prototype.interpolate = function() {

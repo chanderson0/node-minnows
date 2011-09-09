@@ -47,21 +47,19 @@
         bless.deserialize(data, SerializationMap);
         console.log(data);
         player = data.player;
+        console.log(player_id, 'joined');
         join = new Minnows.JoinCommand(+new Date(), player_id, player);
         game.addCommand(join);
         fn({
           history: game.history,
           commands: game.commands
         });
-        io.sockets.emit('join', {
+        return io.sockets.emit('join', {
           time: join.time,
           nick: data.nick,
           id: player_id,
           player: player
         });
-        return interval = setInterval(function() {
-          return socket.volatile.emit('sync', game.state);
-        }, 200);
       });
       broadcast = function(name, data) {
         return socket.broadcast.volatile.emit(name, data);
@@ -70,7 +68,6 @@
       socket.on('mouse', function(data) {
         var mouse;
         bless.deserialize(data, SerializationMap);
-        console.log('got mouse from', player_id);
         mouse = new Minnows.MouseCommand(data.time, player_id, data.dest.x, data.dest.y);
         game.addCommand(mouse);
         data.id = player_id;
@@ -81,7 +78,7 @@
       });
       return socket.on('disconnect', function() {
         var leave;
-        clearInterval(interval);
+        console.log(player_id, 'is leaving');
         leave = new Minnows.LeaveCommand(+new Date(), player_id);
         game.addCommand(leave);
         return socket.broadcast.emit('leave', {

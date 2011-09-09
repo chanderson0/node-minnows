@@ -67,7 +67,7 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
 
         # Add this player to the simulation
         player = data.player
-        #console.log 'PLAYER PROTO', player.__proto__
+        console.log player_id, 'joined'
         join = new Minnows.JoinCommand +new Date(), player_id, player
         game.addCommand join
 
@@ -78,9 +78,9 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
         io.sockets.emit 'join', { time: join.time, nick: data.nick, id: player_id, player: player }
 
         # Sync game state periodically to prevent drift
-        interval = setInterval(() ->
-          socket.volatile.emit 'sync', game.state
-        , 200)
+        # interval = setInterval(() ->
+        #   socket.volatile.emit 'sync', game.state
+        # , 200)
 
       broadcast = (name, data) ->
          socket.broadcast.volatile.emit name, data
@@ -89,7 +89,7 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
       socket.on 'mouse', (data) ->
         bless.deserialize data, SerializationMap
 
-        console.log 'got mouse from', player_id
+        # console.log 'got mouse from', player_id
         mouse = new Minnows.MouseCommand data.time, player_id, data.dest.x, data.dest.y
         game.addCommand mouse
 
@@ -100,7 +100,8 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
         fn(+new Date())
 
       socket.on 'disconnect', () ->
-        clearInterval(interval)
+        console.log player_id, 'is leaving'
+        # clearInterval(interval)
 
         leave = new Minnows.LeaveCommand +new Date(), player_id
         game.addCommand leave

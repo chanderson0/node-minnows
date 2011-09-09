@@ -21,9 +21,18 @@ define (require) ->
   nick = util.uuid()
   id = null
   game = null
-  serverOffset = 0
+  serverOffset = new CircularBuffer 5
   serverTime = ->
-    +new Date() + serverOffset
+    i = serverOffset.firstIndex()
+    sum = 0
+    count = 0
+    while i < serverOffset.length
+      sum += serverOffset.get(i)
+      count++
+      i++
+    delta = if count > 0 then sum / count else 0
+    return +new Date() + delta
+
   pingArr = new CircularBuffer 5
   ping = ->
     i = pingArr.firstIndex()
@@ -89,14 +98,12 @@ define (require) ->
 
   processTime = (earlier, ts) ->
     newerNow = +new Date()
+
     rtt = newerNow - earlier
     thisPing = rtt / 2.0
-    pingArr.push thisPing
 
-    estimate = ts - ping()
-    serverOffset = Math.max(newerNow - estimate, 0)
-
-    # rttText.content = new String(rtt/2.0)
+    delta = newerNow - ts + thisPing
+    serverOffset.push delta
 
   # SOCKET STUFF
   socket = io.connect()

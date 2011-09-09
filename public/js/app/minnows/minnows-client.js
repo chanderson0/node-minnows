@@ -21,9 +21,19 @@ define(function(require) {
   nick = util.uuid();
   id = null;
   game = null;
-  serverOffset = 0;
+  serverOffset = new CircularBuffer(5);
   serverTime = function() {
-    return +new Date() + serverOffset;
+    var count, delta, i, sum;
+    i = serverOffset.firstIndex();
+    sum = 0;
+    count = 0;
+    while (i < serverOffset.length) {
+      sum += serverOffset.get(i);
+      count++;
+      i++;
+    }
+    delta = count > 0 ? sum / count : 0;
+    return +new Date() + delta;
   };
   pingArr = new CircularBuffer(5);
   ping = function() {
@@ -103,13 +113,12 @@ define(function(require) {
     };
   };
   processTime = function(earlier, ts) {
-    var estimate, newerNow, rtt, thisPing;
+    var delta, newerNow, rtt, thisPing;
     newerNow = +new Date();
     rtt = newerNow - earlier;
     thisPing = rtt / 2.0;
-    pingArr.push(thisPing);
-    estimate = ts - ping();
-    return serverOffset = Math.max(newerNow - estimate, 0);
+    delta = newerNow - ts + thisPing;
+    return serverOffset.push(delta);
   };
   socket = io.connect();
   socket.on('connect', function() {

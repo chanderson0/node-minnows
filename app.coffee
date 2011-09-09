@@ -65,7 +65,8 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
 
         # Add this player to the simulation
         player = data.player
-        console.log player_id, 'joined'
+        console.log "#{player_id} joined"
+        
         join = new Minnows.JoinCommand +new Date(), player_id, player
         game.addCommand join
 
@@ -87,7 +88,7 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
       socket.on 'mouse', (data) ->
         bless.deserialize data, SerializationMap
 
-        console.log 'recieved command at', data.time, 'curr time', +new Date()
+        # console.log 'recieved command at', data.time, 'curr time', +new Date()
 
         # console.log 'got mouse from', player_id
         mouse = new Minnows.MouseCommand data.time, player_id, data.dest.x, data.dest.y

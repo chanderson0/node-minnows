@@ -40,6 +40,7 @@ define(function(require) {
     PlayerView.prototype.create = function(state) {
       var circle, line, player;
       player = state.getObjectById(this.player_id);
+      console.log("creating " + this.player_id);
       if (player != null) {
         this.x = player.x;
         this.y = player.y;
@@ -49,7 +50,8 @@ define(function(require) {
         line.strokeColor = this.color;
         this.obj = new this.paper.Group([circle, line]);
         this.rotation = player.rotation;
-        return this.obj.rotate(player.rotation + 90);
+        this.obj.rotate(player.rotation + 90);
+        return console.log("created");
       }
     };
     PlayerView.prototype.remove = function() {

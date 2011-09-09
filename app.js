@@ -45,7 +45,7 @@
         var join, player;
         bless.deserialize(data, SerializationMap);
         player = data.player;
-        console.log(player_id, 'joined');
+        console.log("" + player_id + " joined");
         join = new Minnows.JoinCommand(+new Date(), player_id, player);
         game.addCommand(join);
         fn({
@@ -66,7 +66,6 @@
       socket.on('mouse', function(data) {
         var mouse;
         bless.deserialize(data, SerializationMap);
-        console.log('recieved command at', data.time, 'curr time', +new Date());
         mouse = new Minnows.MouseCommand(data.time, player_id, data.dest.x, data.dest.y);
         game.addCommand(mouse);
         data.id = player_id;

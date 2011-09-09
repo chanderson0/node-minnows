@@ -39,6 +39,7 @@ define (require) ->
 
     create: (state) ->
       player = state.getObjectById(@player_id)
+      console.log "creating #{@player_id}"
 
       if player?
         @x = player.x
@@ -51,6 +52,8 @@ define (require) ->
         @obj = new @paper.Group([circle, line])
         @rotation = player.rotation
         @obj.rotate player.rotation + 90
+
+        console.log "created"
 
     remove: ->
       if @obj?

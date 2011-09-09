@@ -98,6 +98,7 @@ define (require) ->
 
     addCommand: (command) ->
       if command.time < @time
+        console.log 'adding command in past'
         frame = @frame
         firstIndex = @history.firstIndex()
         historical = null
@@ -130,6 +131,7 @@ define (require) ->
             console.log 'lets replay from', frame
             @replayNeeded = frame
       else
+        console.log 'adding command in future'
         @commands.pushOrCreate @frame + 1, command
     
     getObjectById: (id, frame = @frame) ->

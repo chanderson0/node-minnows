@@ -107,6 +107,7 @@ define(function(require) {
     Game.prototype.addCommand = function(command) {
       var firstIndex, frame, historical;
       if (command.time < this.time) {
+        console.log('adding command in past');
         frame = this.frame;
         firstIndex = this.history.firstIndex();
         historical = null;
@@ -138,6 +139,7 @@ define(function(require) {
           }
         }
       } else {
+        console.log('adding command in future');
         return this.commands.pushOrCreate(this.frame + 1, command);
       }
     };

@@ -114,20 +114,12 @@ define (require) ->
   socket.on 'sync', (state) ->
     bless.deserialize state, SerializationMap
 
-    i = game.history.firstIndex()
-    while i < game.history.length
-      old = game.history.get(i)
-      console.log i if not old?
+    frame = game.findFrame state.time
 
-      if not old? or old.time < state.time
-        i++
-      else 
-        break
+    console.log 'sync from', state.time, 'at', game.state.time, 'in', frame, 'of', game.frame
 
-    console.log 'sync from', state.time, 'at', game.state.time
-
-    game.history.set i, state
-    game.replay i, serverTime()
+    game.history.set frame, state
+    game.replay frame, game.frame
 
   socket.on 'join', (data) ->
     bless.deserialize data, SerializationMap

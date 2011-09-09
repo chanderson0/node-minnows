@@ -52,12 +52,15 @@
           history: game.history,
           commands: game.commands
         });
-        return io.sockets.emit('join', {
+        io.sockets.emit('join', {
           time: join.time,
           nick: data.nick,
           id: player_id,
           player: player
         });
+        return interval = setInterval(function() {
+          return socket.volatile.emit('sync', game.state);
+        }, 200);
       });
       broadcast = function(name, data) {
         return socket.broadcast.volatile.emit(name, data);

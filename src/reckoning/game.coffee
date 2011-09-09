@@ -96,23 +96,27 @@ define (require) ->
 
       state.scene.tick @timeStep
 
+    findFrame: (time) ->
+      firstIndex = @history.firstIndex()
+      historical = null
+      frame = @frame
+      while frame >= firstIndex
+        historical = @history.get(frame)
+        if not historical?
+          console.log frame, 'is missing'
+          frame--
+          continue
+        if historical.time < time
+          break
+
+        frame--
+      return frame
+
     addCommand: (command) ->
       if command.time < @time
         # console.log 'adding command in past'
-        frame = @frame
-        firstIndex = @history.firstIndex()
-        historical = null
-        while frame >= firstIndex
-          historical = @history.get(frame)
-          if not historical?
-            console.log frame, 'is missing'
-            frame--
-            continue
-          if historical.time < command.time
-            break
-
-          frame--
-
+        frame = @findFrame(command.time)
+        historical = @history.get(frame)
         if not historical?
           return
 

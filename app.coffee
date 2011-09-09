@@ -66,7 +66,7 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
         # Add this player to the simulation
         player = data.player
         console.log "#{player_id} joined"
-        
+
         join = new Minnows.JoinCommand +new Date(), player_id, player
         game.addCommand join
 
@@ -77,9 +77,9 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
         io.sockets.emit 'join', { time: join.time, nick: data.nick, id: player_id, player: player }
 
         # Sync game state periodically to prevent drift
-        # interval = setInterval(() ->
-        #   socket.volatile.emit 'sync', game.state
-        # , 200)
+        interval = setInterval(() ->
+          socket.volatile.emit 'sync', game.state
+        , 200)
 
       broadcast = (name, data) ->
          socket.broadcast.volatile.emit name, data

@@ -128,23 +128,12 @@ define(function(require) {
     });
   });
   socket.on('sync', function(state) {
-    var i, old;
+    var frame;
     bless.deserialize(state, SerializationMap);
-    i = game.history.firstIndex();
-    while (i < game.history.length) {
-      old = game.history.get(i);
-      if (!(old != null)) {
-        console.log(i);
-      }
-      if (!(old != null) || old.time < state.time) {
-        i++;
-      } else {
-        break;
-      }
-    }
-    console.log('sync from', state.time, 'at', game.state.time);
-    game.history.set(i, state);
-    return game.replay(i, serverTime());
+    frame = game.findFrame(state.time);
+    console.log('sync from', state.time, 'at', game.state.time, 'in', frame, 'of', game.frame);
+    game.history.set(frame, state);
+    return game.replay(frame, game.frame);
   });
   socket.on('join', function(data) {
     var join, player, ready;

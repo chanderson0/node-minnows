@@ -104,24 +104,30 @@ define(function(require) {
       }
       return state.scene.tick(this.timeStep);
     };
-    Game.prototype.addCommand = function(command) {
+    Game.prototype.findFrame = function(time) {
       var firstIndex, frame, historical;
-      if (command.time < this.time) {
-        frame = this.frame;
-        firstIndex = this.history.firstIndex();
-        historical = null;
-        while (frame >= firstIndex) {
-          historical = this.history.get(frame);
-          if (!(historical != null)) {
-            console.log(frame, 'is missing');
-            frame--;
-            continue;
-          }
-          if (historical.time < command.time) {
-            break;
-          }
+      firstIndex = this.history.firstIndex();
+      historical = null;
+      frame = this.frame;
+      while (frame >= firstIndex) {
+        historical = this.history.get(frame);
+        if (!(historical != null)) {
+          console.log(frame, 'is missing');
           frame--;
+          continue;
         }
+        if (historical.time < time) {
+          break;
+        }
+        frame--;
+      }
+      return frame;
+    };
+    Game.prototype.addCommand = function(command) {
+      var frame, historical;
+      if (command.time < this.time) {
+        frame = this.findFrame(command.time);
+        historical = this.history.get(frame);
         if (!(historical != null)) {
           return;
         }

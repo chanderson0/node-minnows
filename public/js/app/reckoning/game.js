@@ -128,7 +128,7 @@ define(function(require) {
         console.log('simulation at', this.frame, 'inserting at', frame);
         console.log('time at', this.time, 'frame has', historical.time);
         console.log('for command at', command.time);
-        if (historical.time > command.time) {} else {
+        if (historical.time < command.time) {} else {
           this.commands.pushOrCreate(frame, command);
           if (this.replayNeeded) {
             return this.replayNeeded = Math.min(this.replayNeeded, frame);

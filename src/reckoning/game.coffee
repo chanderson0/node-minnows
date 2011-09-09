@@ -119,7 +119,7 @@ define (require) ->
         console.log 'time at',@time,'frame has',historical.time
         console.log 'for command at',command.time
 
-        if historical.time > command.time
+        if historical.time < command.time
           # Discard, too old
         else
           @commands.pushOrCreate frame, command

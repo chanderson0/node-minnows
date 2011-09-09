@@ -48,7 +48,7 @@ define (require) ->
   mouseTimeout = null
   sendmove = (pos) ->
     socket.emit 'mouse', { time: serverTime(), dest: { x: pos.x, y: pos.y } }
-  sendmove_t = _.throttle sendmove, 40
+  sendmove_t = _.throttle sendmove, 1
 
   domove = (pos) ->
     move = new Minnows.MouseCommand serverTime(), id, pos.x, pos.y
@@ -137,9 +137,14 @@ define (require) ->
     join = new Minnows.JoinCommand data.time, data.id, player
     game.addCommand join
 
+  dolog = (msg) ->
+    console.log msg
+  dolog_t = _.throttle dolog, 100
+
   socket.on 'mouse', (data) ->
     bless.deserialize data, SerializationMap
 
+    # dolog_t "mouse from #{data.id}"
     return if data.id == id
      
     dest = data.dest

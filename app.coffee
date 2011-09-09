@@ -79,11 +79,11 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
         # Sync game state periodically to prevent drift
         interval = setInterval(() ->
           socket.volatile.emit 'sync', game.state
-        , 200)
+        , 2000)
 
       broadcast = (name, data) ->
          socket.broadcast.volatile.emit name, data
-      broadcast_t = _u.throttle broadcast, 0
+      broadcast_t = _u.throttle broadcast, 40
 
       socket.on 'mouse', (data) ->
         bless.deserialize data, SerializationMap

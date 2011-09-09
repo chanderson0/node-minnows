@@ -52,7 +52,6 @@ define(function(require) {
         t += this.timeStep;
       }
       this.state = state;
-      console.log("we were at " + this.frame + ", now at " + stopFrame);
       return this.frame = stopFrame;
     };
     Game.prototype.tick = function(now, draw) {
@@ -131,7 +130,7 @@ define(function(require) {
         if (!(historical != null)) {
           return;
         }
-        if (historical.time < command.time) {} else {
+        if (historical.time > command.time) {} else {
           this.commands.pushOrCreate(frame, command);
           if (this.replayNeeded) {
             return this.replayNeeded = Math.min(this.replayNeeded, frame);

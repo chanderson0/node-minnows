@@ -60,12 +60,12 @@
         });
         return interval = setInterval(function() {
           return socket.volatile.emit('sync', game.state);
-        }, 200);
+        }, 2000);
       });
       broadcast = function(name, data) {
         return socket.broadcast.volatile.emit(name, data);
       };
-      broadcast_t = _u.throttle(broadcast, 0);
+      broadcast_t = _u.throttle(broadcast, 40);
       socket.on('mouse', function(data) {
         var mouse;
         bless.deserialize(data, SerializationMap);

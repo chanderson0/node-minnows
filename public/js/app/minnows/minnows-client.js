@@ -1,5 +1,5 @@
 define(function(require) {
-  var CircularBuffer, Minnows, Reckoning, SerializationMap, atool, bless, determineTime, domove, game, id, key, mouseTimeout, nick, obj, paper, ping, processTime, rttText, sendmove, sendmove_t, serverDelta, serverOffset, serverTime, setup, socket, util, view;
+  var CircularBuffer, Minnows, Reckoning, SerializationMap, atool, bless, determineTime, dolog, dolog_t, domove, game, id, key, mouseTimeout, nick, obj, paper, ping, processTime, rttText, sendmove, sendmove_t, serverDelta, serverOffset, serverTime, setup, socket, util, view;
   Reckoning = require('reckoning/reckoning');
   Minnows = require('minnows/minnows');
   CircularBuffer = require('reckoning/util/circular_buffer');
@@ -59,7 +59,7 @@ define(function(require) {
       }
     });
   };
-  sendmove_t = _.throttle(sendmove, 40);
+  sendmove_t = _.throttle(sendmove, 1);
   domove = function(pos) {
     var move;
     move = new Minnows.MouseCommand(serverTime(), id, pos.x, pos.y);
@@ -148,6 +148,10 @@ define(function(require) {
     join = new Minnows.JoinCommand(data.time, data.id, player);
     return game.addCommand(join);
   });
+  dolog = function(msg) {
+    return console.log(msg);
+  };
+  dolog_t = _.throttle(dolog, 100);
   socket.on('mouse', function(data) {
     var dest, move;
     bless.deserialize(data, SerializationMap);

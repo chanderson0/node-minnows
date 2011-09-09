@@ -49,7 +49,7 @@ define (require) ->
         t += @timeStep
 
       @state = state
-      console.log "we were at #{@frame}, now at #{stopFrame}"
+      # console.log "we were at #{@frame}, now at #{stopFrame}"
       @frame = stopFrame
 
     tick: (now = null, draw = null) ->
@@ -114,18 +114,20 @@ define (require) ->
 
     addCommand: (command) ->
       if command.time < @time
-        # console.log 'adding command in past'
         frame = @findFrame(command.time)
         historical = @history.get(frame)
         if not historical?
           return
 
+        # console.log 'adding command in past', frame, @frame
+        
         # console.log 'simulation at',@frame,'inserting at',frame
         # console.log 'time at',@time,'frame has',historical.time
         # console.log 'for command at',command.time
 
-        if historical.time < command.time
+        if historical.time > command.time
           # Discard, too old
+          # console.log 'had to discard command at', command.time, 'was before earliest command', historical.time
         else
           @commands.pushOrCreate frame, command
 

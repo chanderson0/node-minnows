@@ -43,9 +43,7 @@
       player_id = player_ids++;
       socket.on('nick', function(data, fn) {
         var join, player;
-        console.log(data);
         bless.deserialize(data, SerializationMap);
-        console.log(data);
         player = data.player;
         console.log(player_id, 'joined');
         join = new Minnows.JoinCommand(+new Date(), player_id, player);

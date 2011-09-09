@@ -45,7 +45,6 @@ define (require) ->
         # console.log frame
         frame += 1
         t += @timeStep
-      # console.log "ended at frame", frame
 
       @state = state
       @frame = frame
@@ -82,6 +81,9 @@ define (require) ->
       prev = @history.get @frame - 1
       return @state.interpolate prev, alpha
 
+    predict: (state, prevState) ->
+      # Override me!
+
     applyCommands: (frame, state) ->
       commands = @commands.getDefault(frame, [])
       i = 0
@@ -93,32 +95,32 @@ define (require) ->
       state.scene.tick @timeStep
 
     addCommand: (command) ->
-      if command.time < @time
-        frame = @history.firstIndex()
-        length = @history.length
-        while frame+1 < length
-          if not @history.get(frame+1)?
-            console.log frame+1, 'is missing'
-          if not (@history.get(frame+1)? && @history.get(frame+1).time < command.time)
-            break
+      # if command.time < @time
+      #   frame = @history.firstIndex()
+      #   length = @history.length
+      #   while frame+1 < length
+      #     if not @history.get(frame+1)?
+      #       console.log frame+1, 'is missing'
+      #     if not (@history.get(frame+1)? && @history.get(frame+1).time < command.time)
+      #       break
 
-          frame++
+      #     frame++
 
-        state = @history.get(frame)
-        if not state?
-          return
+      #   state = @history.get(frame)
+      #   if not state?
+      #     return
 
-        if state.time > command.time
-          # Discard, too old
-        else
-          @commands.pushOrCreate frame, command
+      #   if state.time > command.time
+      #     # Discard, too old
+      #   else
+      #     @commands.pushOrCreate frame, command
 
-          if @replayNeeded
-            @replayNeeded = Math.min(@replayNeeded, frame)
-          else
-            console.log 'lets replay from', frame
-            @replayNeeded = frame
-      else
+      #     if @replayNeeded
+      #       @replayNeeded = Math.min(@replayNeeded, frame)
+      #     else
+      #       console.log 'lets replay from', frame
+      #       @replayNeeded = frame
+      # else
         @commands.pushOrCreate @frame + 1, command
     
     getObjectById: (id, frame = @frame) ->

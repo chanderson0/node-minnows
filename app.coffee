@@ -61,9 +61,7 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
 
       # Client ready
       socket.on 'nick', (data, fn) ->
-        console.log data
         bless.deserialize data, SerializationMap
-        console.log data
 
         # Add this player to the simulation
         player = data.player

@@ -88,6 +88,7 @@ define(function(require) {
       prev = this.history.get(this.frame - 1);
       return this.state.interpolate(prev, alpha);
     };
+    Game.prototype.predict = function(state, prevState) {};
     Game.prototype.applyCommands = function(frame, state) {
       var command, commands, i;
       commands = this.commands.getDefault(frame, []);
@@ -100,35 +101,7 @@ define(function(require) {
       return state.scene.tick(this.timeStep);
     };
     Game.prototype.addCommand = function(command) {
-      var frame, length, state;
-      if (command.time < this.time) {
-        frame = this.history.firstIndex();
-        length = this.history.length;
-        while (frame + 1 < length) {
-          if (!(this.history.get(frame + 1) != null)) {
-            console.log(frame + 1, 'is missing');
-          }
-          if (!((this.history.get(frame + 1) != null) && this.history.get(frame + 1).time < command.time)) {
-            break;
-          }
-          frame++;
-        }
-        state = this.history.get(frame);
-        if (!(state != null)) {
-          return;
-        }
-        if (state.time > command.time) {} else {
-          this.commands.pushOrCreate(frame, command);
-          if (this.replayNeeded) {
-            return this.replayNeeded = Math.min(this.replayNeeded, frame);
-          } else {
-            console.log('lets replay from', frame);
-            return this.replayNeeded = frame;
-          }
-        }
-      } else {
-        return this.commands.pushOrCreate(this.frame + 1, command);
-      }
+      return this.commands.pushOrCreate(this.frame + 1, command);
     };
     Game.prototype.getObjectById = function(id, frame) {
       if (frame == null) {

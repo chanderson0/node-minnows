@@ -7,6 +7,8 @@ define (require) ->
   CircularBuffer = require './util/circular_buffer'
   Serializable = require './serializable'
 
+  _u = require 'underscore'
+
   return class Game extends Serializable
     __type: 'Game'
 
@@ -29,29 +31,30 @@ define (require) ->
       @timeStep = 1000 / 60.0
       @replayNeeded = false
 
-    replay: (stateIdx, stopTime) ->
-      state = @history.get stateIdx
-      frame = stateIdx
+    replay: (fromFrame, stopFrame) ->
+      frame = fromFrame
+      state = @history.get frame
 
-      # console.log "replaying from #{frame}, simulation at #{@frame}"
+      console.log "replaying from #{frame}, simulation at #{@frame}/#{@time}"
       t = state.time
-      while t < stopTime
+      while frame <= stopFrame
+        console.log 'replaying', frame
         newState = state.clone t
-        @history.set frame, state
 
-        @applyCommands(frame, newState)
+        @applyCommands frame, newState
+        @history.set frame, newState
         
         state = newState
-        # console.log frame
         frame += 1
         t += @timeStep
 
       @state = state
-      @frame = frame
+      console.log "we were at #{@frame}, now at #{stopFrame}"
+      @frame = stopFrame
 
     tick: (now = null, draw = null) ->
       if @replayNeeded
-        @replay @replayNeeded, @time
+        @replay @replayNeeded, @frame
         @replayNeeded = false
 
       if not now?
@@ -60,15 +63,14 @@ define (require) ->
       @time = now
       @accumulator += diff
 
-      # console.log "tick #{@frame} #{@accumulator}"
+      # console.log "tick #{@frame} #{@accumulator}/#{@time}"
       while @accumulator > @timeStep
-        # console.log @frame
+        @frame += 1
         newState = @state.clone @time
 
         @applyCommands(@frame, newState)
         @history.set @frame, @state
 
-        @frame += 1
         @state = newState
         @accumulator -= @timeStep
 
@@ -95,32 +97,37 @@ define (require) ->
       state.scene.tick @timeStep
 
     addCommand: (command) ->
-      # if command.time < @time
-      #   frame = @history.firstIndex()
-      #   length = @history.length
-      #   while frame+1 < length
-      #     if not @history.get(frame+1)?
-      #       console.log frame+1, 'is missing'
-      #     if not (@history.get(frame+1)? && @history.get(frame+1).time < command.time)
-      #       break
+      if command.time < @time
+        frame = @frame
+        firstIndex = @history.firstIndex()
+        while frame >= firstIndex
+          historical = @history.get(frame)
+          if not historical?
+            console.log frame, 'is missing'
+            frame--
+            continue
+          if historical.time < command.time
+            break
 
-      #     frame++
+          frame--
 
-      #   state = @history.get(frame)
-      #   if not state?
-      #     return
+        console.log 'will insert at',frame,'on',@frame
 
-      #   if state.time > command.time
-      #     # Discard, too old
-      #   else
-      #     @commands.pushOrCreate frame, command
+        state = @history.get(frame)
+        if not state?
+          return
 
-      #     if @replayNeeded
-      #       @replayNeeded = Math.min(@replayNeeded, frame)
-      #     else
-      #       console.log 'lets replay from', frame
-      #       @replayNeeded = frame
-      # else
+        if state.time > command.time
+          # Discard, too old
+        else
+          @commands.pushOrCreate frame, command
+
+          if @replayNeeded
+            @replayNeeded = Math.min(@replayNeeded, frame)
+          else
+            console.log 'lets replay from', frame
+            @replayNeeded = frame
+      else
         @commands.pushOrCreate @frame + 1, command
     
     getObjectById: (id, frame = @frame) ->

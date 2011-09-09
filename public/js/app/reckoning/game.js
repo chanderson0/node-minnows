@@ -7,13 +7,14 @@ var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, par
   return child;
 };
 define(function(require) {
-  var CircularBuffer, Command, Game, GameObject, Scene, Serializable, State;
+  var CircularBuffer, Command, Game, GameObject, Scene, Serializable, State, _u;
   Command = require('./command');
   GameObject = require('./game_object');
   Scene = require('./scene');
   State = require('./state');
   CircularBuffer = require('./util/circular_buffer');
   Serializable = require('./serializable');
+  _u = require('underscore');
   return Game = (function() {
     __extends(Game, Serializable);
     Game.prototype.__type = 'Game';
@@ -35,21 +36,24 @@ define(function(require) {
       this.timeStep = 1000 / 60.0;
       this.replayNeeded = false;
     }
-    Game.prototype.replay = function(stateIdx, stopTime) {
+    Game.prototype.replay = function(fromFrame, stopFrame) {
       var frame, newState, state, t;
-      state = this.history.get(stateIdx);
-      frame = stateIdx;
+      frame = fromFrame;
+      state = this.history.get(frame);
+      console.log("replaying from " + frame + ", simulation at " + this.frame + "/" + this.time);
       t = state.time;
-      while (t < stopTime) {
+      while (frame <= stopFrame) {
+        console.log('replaying', frame);
         newState = state.clone(t);
-        this.history.set(frame, state);
         this.applyCommands(frame, newState);
+        this.history.set(frame, newState);
         state = newState;
         frame += 1;
         t += this.timeStep;
       }
       this.state = state;
-      return this.frame = frame;
+      console.log("we were at " + this.frame + ", now at " + stopFrame);
+      return this.frame = stopFrame;
     };
     Game.prototype.tick = function(now, draw) {
       var diff, interpState, newState;
@@ -60,7 +64,7 @@ define(function(require) {
         draw = null;
       }
       if (this.replayNeeded) {
-        this.replay(this.replayNeeded, this.time);
+        this.replay(this.replayNeeded, this.frame);
         this.replayNeeded = false;
       }
       if (!(now != null)) {
@@ -70,10 +74,10 @@ define(function(require) {
       this.time = now;
       this.accumulator += diff;
       while (this.accumulator > this.timeStep) {
+        this.frame += 1;
         newState = this.state.clone(this.time);
         this.applyCommands(this.frame, newState);
         this.history.set(this.frame, this.state);
-        this.frame += 1;
         this.state = newState;
         this.accumulator -= this.timeStep;
       }
@@ -101,7 +105,39 @@ define(function(require) {
       return state.scene.tick(this.timeStep);
     };
     Game.prototype.addCommand = function(command) {
-      return this.commands.pushOrCreate(this.frame + 1, command);
+      var firstIndex, frame, historical, state;
+      if (command.time < this.time) {
+        frame = this.frame;
+        firstIndex = this.history.firstIndex();
+        while (frame >= firstIndex) {
+          historical = this.history.get(frame);
+          if (!(historical != null)) {
+            console.log(frame, 'is missing');
+            frame--;
+            continue;
+          }
+          if (historical.time < command.time) {
+            break;
+          }
+          frame--;
+        }
+        console.log('will insert at', frame, 'on', this.frame);
+        state = this.history.get(frame);
+        if (!(state != null)) {
+          return;
+        }
+        if (state.time > command.time) {} else {
+          this.commands.pushOrCreate(frame, command);
+          if (this.replayNeeded) {
+            return this.replayNeeded = Math.min(this.replayNeeded, frame);
+          } else {
+            console.log('lets replay from', frame);
+            return this.replayNeeded = frame;
+          }
+        }
+      } else {
+        return this.commands.pushOrCreate(this.frame + 1, command);
+      }
     };
     Game.prototype.getObjectById = function(id, frame) {
       if (frame == null) {

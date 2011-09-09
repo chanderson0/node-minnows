@@ -1,5 +1,5 @@
 define(function(require) {
-  var CircularBuffer, Minnows, Reckoning, SerializationMap, atool, bless, domove, game, id, key, mouseTimeout, nick, obj, paper, ping, processTime, rttText, sendmove, sendmove_t, serverOffset, serverTime, setup, socket, util, view;
+  var CircularBuffer, Minnows, Reckoning, SerializationMap, atool, bless, domove, game, id, key, mouseTimeout, nick, obj, paper, ping, processTime, rttText, sendmove, sendmove_t, serverDelta, serverOffset, serverTime, setup, socket, util, view;
   Reckoning = require('reckoning/reckoning');
   Minnows = require('minnows/minnows');
   CircularBuffer = require('reckoning/util/circular_buffer');
@@ -23,8 +23,8 @@ define(function(require) {
   game = null;
   ping = 0;
   serverOffset = new CircularBuffer(5);
-  serverTime = function() {
-    var count, delta, i, sum;
+  serverDelta = function() {
+    var count, i, sum;
     i = serverOffset.firstIndex();
     sum = 0;
     count = 0;
@@ -33,8 +33,14 @@ define(function(require) {
       count++;
       i++;
     }
-    delta = count > 0 ? sum / count : 0;
-    return +new Date() + delta;
+    if (count > 0) {
+      return sum / count;
+    } else {
+      return 0;
+    }
+  };
+  serverTime = function() {
+    return +new Date() + serverDelta();
   };
   view = [];
   paper.setup('game-canvas');
@@ -93,7 +99,7 @@ define(function(require) {
     };
     return paper.view.onFrame = function(e) {
       game.tick(serverTime(), draw);
-      return rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping * 100) / 100;
+      return rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping * 100) / 100 + ' ' + Math.round(serverDelta() * 100) / 100;
     };
   };
   processTime = function(earlier, ts) {

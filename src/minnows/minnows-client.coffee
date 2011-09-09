@@ -23,7 +23,7 @@ define (require) ->
   game = null
   ping = 0
   serverOffset = new CircularBuffer 5
-  serverTime = ->
+  serverDelta = ->
     i = serverOffset.firstIndex()
     sum = 0
     count = 0
@@ -31,8 +31,9 @@ define (require) ->
       sum += serverOffset.get(i)
       count++
       i++
-    delta = if count > 0 then sum / count else 0
-    return +new Date() + delta
+    return if count > 0 then sum / count else 0
+  serverTime = ->
+    return +new Date() + serverDelta()
 
   view = []
 
@@ -84,7 +85,7 @@ define (require) ->
 
     paper.view.onFrame = (e) ->
       game.tick serverTime(), draw
-      rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping*100)/100
+      rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping*100)/100 + ' ' + Math.round(serverDelta()*100)/100
 
   processTime = (earlier, ts) ->
     newerNow = +new Date()

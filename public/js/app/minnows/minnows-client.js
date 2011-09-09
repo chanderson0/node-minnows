@@ -1,5 +1,5 @@
 define(function(require) {
-  var CircularBuffer, Minnows, Reckoning, SerializationMap, atool, bless, domove, game, id, key, mouseTimeout, nick, obj, paper, ping, processTime, rttText, sendmove, sendmove_t, serverDelta, serverOffset, serverTime, setup, socket, util, view;
+  var CircularBuffer, Minnows, Reckoning, SerializationMap, atool, bless, determineTime, domove, game, id, key, mouseTimeout, nick, obj, paper, ping, processTime, rttText, sendmove, sendmove_t, serverDelta, serverOffset, serverTime, setup, socket, util, view;
   Reckoning = require('reckoning/reckoning');
   Minnows = require('minnows/minnows');
   CircularBuffer = require('reckoning/util/circular_buffer');
@@ -107,13 +107,15 @@ define(function(require) {
     newerNow = +new Date();
     rtt = newerNow - earlier;
     ping = rtt / 2.0;
-    delta = newerNow - ts + ping;
+    delta = earlier - ts + ping;
     return serverOffset.push(delta);
   };
   socket = io.connect();
   socket.on('connect', function() {
     var me;
     console.log('connected');
+    determineTime();
+    setInterval(determineTime, 1000);
     me = new Minnows.Player(100, 100, 0, 0);
     return socket.emit('nick', {
       'nick': nick,
@@ -181,11 +183,11 @@ define(function(require) {
     leave = new Minnows.LeaveCommand(data.time, data.id);
     return game.addCommand(leave);
   });
-  return setInterval(function() {
+  return determineTime = function() {
     var now;
     now = +new Date();
     return socket.emit('ping', now, function(ts) {
       return processTime(now, ts);
     });
-  }, 1000);
+  };
 });

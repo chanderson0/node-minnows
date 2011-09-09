@@ -93,13 +93,16 @@ define (require) ->
     rtt = newerNow - earlier
     ping = rtt / 2.0
 
-    delta = newerNow - ts + ping
+    delta = earlier - ts + ping
     serverOffset.push delta
 
   # SOCKET STUFF
   socket = io.connect()
   socket.on 'connect', () ->
     console.log('connected')
+
+    determineTime()
+    setInterval(determineTime, 1000)
 
     me = new Minnows.Player 100, 100, 0, 0
     socket.emit 'nick', { 'nick': nick, 'player': me }, (data) ->
@@ -165,8 +168,7 @@ define (require) ->
     leave = new Minnows.LeaveCommand data.time, data.id
     game.addCommand leave
 
-  setInterval(() ->
+  determineTime = ->
     now = +new Date()
     socket.emit 'ping', now, (ts) ->
       processTime now, ts
-  , 1000)

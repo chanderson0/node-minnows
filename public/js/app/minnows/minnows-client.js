@@ -42,7 +42,7 @@ define(function(require) {
   rttText = new paper.PointText(new paper.Point(10, 17));
   rttText.justification = 'left';
   rttText.fillColor = 'white';
-  rttText.content = new String(ping());
+  rttText.content = ping;
   mouseTimeout = null;
   sendmove = function(pos) {
     return socket.emit('mouse', {
@@ -93,7 +93,7 @@ define(function(require) {
     };
     return paper.view.onFrame = function(e) {
       game.tick(serverTime(), draw);
-      return rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping() * 100) / 100;
+      return rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping * 100) / 100;
     };
   };
   processTime = function(earlier, ts) {

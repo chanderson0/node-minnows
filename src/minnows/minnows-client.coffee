@@ -42,7 +42,7 @@ define (require) ->
   rttText = new paper.PointText(new paper.Point(10, 17))
   rttText.justification = 'left'
   rttText.fillColor = 'white'
-  rttText.content = new String(ping())
+  rttText.content = ping
 
   mouseTimeout = null
   sendmove = (pos) ->
@@ -84,7 +84,7 @@ define (require) ->
 
     paper.view.onFrame = (e) ->
       game.tick serverTime(), draw
-      rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping()*100)/100
+      rttText.content = Math.round(game.time) + ' ' + game.frame + ' ' + Math.round(ping*100)/100
 
   processTime = (earlier, ts) ->
     newerNow = +new Date()

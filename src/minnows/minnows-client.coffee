@@ -92,7 +92,7 @@ define (require) ->
 
     rtt = now - earlier
     ping = rtt / 2.0
-    delta = server - earlier + ping
+    delta = server - earlier - ping
 
     console.log now, earlier, server, ping, delta
     serverOffset.push delta

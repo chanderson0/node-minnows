@@ -107,7 +107,6 @@ define(function(require) {
     Game.prototype.addCommand = function(command) {
       var firstIndex, frame, historical;
       if (command.time < this.time) {
-        console.log('adding command in past');
         frame = this.frame;
         firstIndex = this.history.firstIndex();
         historical = null;
@@ -126,20 +125,15 @@ define(function(require) {
         if (!(historical != null)) {
           return;
         }
-        console.log('simulation at', this.frame, 'inserting at', frame);
-        console.log('time at', this.time, 'frame has', historical.time);
-        console.log('for command at', command.time);
         if (historical.time < command.time) {} else {
           this.commands.pushOrCreate(frame, command);
           if (this.replayNeeded) {
             return this.replayNeeded = Math.min(this.replayNeeded, frame);
           } else {
-            console.log('lets replay from', frame);
             return this.replayNeeded = frame;
           }
         }
       } else {
-        console.log('adding command in future');
         return this.commands.pushOrCreate(this.frame + 1, command);
       }
     };

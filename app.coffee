@@ -87,6 +87,8 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
       socket.on 'mouse', (data) ->
         bless.deserialize data, SerializationMap
 
+        console.log 'recieved command at', data.time, 'curr time', +new Date()
+
         # console.log 'got mouse from', player_id
         mouse = new Minnows.MouseCommand data.time, player_id, data.dest.x, data.dest.y
         game.addCommand mouse

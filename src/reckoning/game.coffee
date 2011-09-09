@@ -98,7 +98,7 @@ define (require) ->
 
     addCommand: (command) ->
       if command.time < @time
-        console.log 'adding command in past'
+        # console.log 'adding command in past'
         frame = @frame
         firstIndex = @history.firstIndex()
         historical = null
@@ -116,9 +116,9 @@ define (require) ->
         if not historical?
           return
 
-        console.log 'simulation at',@frame,'inserting at',frame
-        console.log 'time at',@time,'frame has',historical.time
-        console.log 'for command at',command.time
+        # console.log 'simulation at',@frame,'inserting at',frame
+        # console.log 'time at',@time,'frame has',historical.time
+        # console.log 'for command at',command.time
 
         if historical.time < command.time
           # Discard, too old
@@ -128,10 +128,10 @@ define (require) ->
           if @replayNeeded
             @replayNeeded = Math.min(@replayNeeded, frame)
           else
-            console.log 'lets replay from', frame
+            # console.log 'lets replay from', frame
             @replayNeeded = frame
       else
-        console.log 'adding command in future'
+        # console.log 'adding command in future'
         @commands.pushOrCreate @frame + 1, command
     
     getObjectById: (id, frame = @frame) ->

@@ -66,6 +66,7 @@
       socket.on('mouse', function(data) {
         var mouse;
         bless.deserialize(data, SerializationMap);
+        console.log('recieved command at', data.time, 'curr time', +new Date());
         mouse = new Minnows.MouseCommand(data.time, player_id, data.dest.x, data.dest.y);
         game.addCommand(mouse);
         data.id = player_id;

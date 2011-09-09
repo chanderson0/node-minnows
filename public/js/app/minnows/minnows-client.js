@@ -111,7 +111,7 @@ define(function(require) {
     estimate = ts - ping();
     return serverOffset = Math.max(newerNow - estimate, 0);
   };
-  socket = io.connect('http://localhost');
+  socket = io.connect();
   socket.on('connect', function() {
     var me;
     console.log('connected');

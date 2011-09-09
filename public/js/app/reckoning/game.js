@@ -31,8 +31,8 @@ define(function(require) {
       this.accumulator = 0;
       this.frame = 0;
       this.state = new State(this.time, new Scene({}));
-      this.history = new CircularBuffer(500);
-      this.commands = new CircularBuffer(500);
+      this.history = new CircularBuffer(100);
+      this.commands = new CircularBuffer(100);
       this.timeStep = 1000 / 60.0;
       this.replayNeeded = false;
     }
@@ -105,10 +105,11 @@ define(function(require) {
       return state.scene.tick(this.timeStep);
     };
     Game.prototype.addCommand = function(command) {
-      var firstIndex, frame, historical, state;
+      var firstIndex, frame, historical;
       if (command.time < this.time) {
         frame = this.frame;
         firstIndex = this.history.firstIndex();
+        historical = null;
         while (frame >= firstIndex) {
           historical = this.history.get(frame);
           if (!(historical != null)) {
@@ -121,12 +122,13 @@ define(function(require) {
           }
           frame--;
         }
-        console.log('will insert at', frame, 'on', this.frame);
-        state = this.history.get(frame);
-        if (!(state != null)) {
+        if (!(historical != null)) {
           return;
         }
-        if (state.time > command.time) {} else {
+        console.log('simulation at', this.frame, 'inserting at', frame);
+        console.log('time at', this.time, 'frame has', historical.time);
+        console.log('for command at', command.time);
+        if (historical.time > command.time) {} else {
           this.commands.pushOrCreate(frame, command);
           if (this.replayNeeded) {
             return this.replayNeeded = Math.min(this.replayNeeded, frame);

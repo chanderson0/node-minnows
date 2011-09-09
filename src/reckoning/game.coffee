@@ -25,8 +25,8 @@ define (require) ->
 
       @state = new State @time, new Scene({})
 
-      @history = new CircularBuffer 500
-      @commands = new CircularBuffer 500
+      @history = new CircularBuffer 100
+      @commands = new CircularBuffer 100
 
       @timeStep = 1000 / 60.0
       @replayNeeded = false
@@ -100,6 +100,7 @@ define (require) ->
       if command.time < @time
         frame = @frame
         firstIndex = @history.firstIndex()
+        historical = null
         while frame >= firstIndex
           historical = @history.get(frame)
           if not historical?
@@ -111,13 +112,14 @@ define (require) ->
 
           frame--
 
-        console.log 'will insert at',frame,'on',@frame
-
-        state = @history.get(frame)
-        if not state?
+        if not historical?
           return
 
-        if state.time > command.time
+        console.log 'simulation at',@frame,'inserting at',frame
+        console.log 'time at',@time,'frame has',historical.time
+        console.log 'for command at',command.time
+
+        if historical.time > command.time
           # Discard, too old
         else
           @commands.pushOrCreate frame, command

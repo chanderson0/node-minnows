@@ -99,7 +99,7 @@ define (require) ->
     # rttText.content = new String(rtt/2.0)
 
   # SOCKET STUFF
-  socket = io.connect('http://localhost')
+  socket = io.connect()
   socket.on 'connect', () ->
     console.log('connected')
 

@@ -40,7 +40,7 @@ define(function(require) {
     };
     Player2D.prototype.tick = function(dt) {
       var newPos;
-      newPos = Point.add(this.x, this.y, this.vx, this.vy);
+      newPos = Point.add(this.x, this.y, this.vx * dt, this.vy * dt);
       return this.setPos(newPos.x, newPos.y);
     };
     return Player2D;

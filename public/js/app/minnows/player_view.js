@@ -10,8 +10,11 @@ define(function(require) {
       this.truth = truth != null ? truth : false;
       this.interp = interp != null ? interp : true;
       console.log("drawing " + this.player_id);
+      this.time = this.game.time;
     }
     PlayerView.prototype.tick = function(state) {
+      this.prevTime = this.time;
+      this.time = state.time;
       return this.draw(state);
     };
     PlayerView.prototype.draw = function(state) {
@@ -23,11 +26,18 @@ define(function(require) {
         }
         delta = Point.subtract(player.x + player.vx, player.y + player.vy, this.x, this.y);
         dist = Point.getLength(delta.x, delta.y);
-        if (dist < 0.25 || dist > 1000 || this.truth) {} else {
-          delta = Point.normalize(delta.x, delta.y, dist * 0.7);
+        if (dist < 0.25 || dist > 50 || this.truth) {
+          if (dist > 50) {
+            console.log('snap pos');
+          }
+        } else {
+          delta = Point.normalize(delta.x, delta.y, dist * 0.8);
         }
         dp = new this.paper.Point(delta);
         da = dist > 0.25 ? dp.getAngle() - this.rotation : 0;
+        if (da < 10 || da > 90 || this.truth) {} else {
+          da *= 0.1;
+        }
         this.obj.translate(dp);
         this.obj.rotate(da);
         this.x += delta.x;

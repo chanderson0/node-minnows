@@ -44,9 +44,11 @@ define(function(require) {
       var dir, dist, to_move;
       dir = Point.subtract(this.destx, this.desty, this.x, this.y);
       dist = Point.getLength(dir.x, dir.y);
-      to_move = Point.normalize(dir.x, dir.y, Math.sqrt(dist) * dt / 1000.0 * 40);
+      to_move = Point.normalize(dir.x, dir.y, Math.sqrt(dist) * dt / 1000.0 * 4);
       if (dist < 0.5) {
-        to_move = dir;
+        to_move.x = 0;
+        to_move.y = 0;
+        this.setPos(this.destx, this.desty);
       }
       return this.setVel(to_move.x, to_move.y);
     };

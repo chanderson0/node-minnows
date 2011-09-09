@@ -20,9 +20,11 @@ define (require) ->
       dir = Point.subtract @destx, @desty, @x, @y
       dist = Point.getLength dir.x, dir.y
 
-      to_move = Point.normalize dir.x, dir.y, Math.sqrt(dist) * dt / 1000.0 * 40
+      to_move = Point.normalize dir.x, dir.y, Math.sqrt(dist) * dt / 1000.0 * 4
       if dist < 0.5
-        to_move = dir
+        to_move.x = 0
+        to_move.y = 0
+        @setPos @destx, @desty
 
       @setVel to_move.x, to_move.y
     

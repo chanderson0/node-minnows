@@ -30,5 +30,5 @@ define (require) ->
         (prev.rotation + @rotation) / 2.0
     
     tick: (dt) ->
-      newPos = Point.add(@x, @y, @vx, @vy)
+      newPos = Point.add(@x, @y, @vx * dt, @vy * dt)
       @setPos newPos.x, newPos.y

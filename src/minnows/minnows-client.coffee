@@ -21,6 +21,7 @@ define (require) ->
   nick = util.uuid()
   id = null
   game = null
+  ping = 0
   serverOffset = new CircularBuffer 5
   serverTime = ->
     i = serverOffset.firstIndex()
@@ -32,17 +33,6 @@ define (require) ->
       i++
     delta = if count > 0 then sum / count else 0
     return +new Date() + delta
-
-  pingArr = new CircularBuffer 5
-  ping = ->
-    i = pingArr.firstIndex()
-    sum = 0
-    count = 0
-    while i < pingArr.length
-      sum += pingArr.get(i)
-      count++
-      i++
-    return if count > 0 then sum / count else 0
 
   view = []
 
@@ -100,9 +90,9 @@ define (require) ->
     newerNow = +new Date()
 
     rtt = newerNow - earlier
-    thisPing = rtt / 2.0
+    ping = rtt / 2.0
 
-    delta = newerNow - ts + thisPing
+    delta = newerNow - ts + ping
     serverOffset.push delta
 
   # SOCKET STUFF

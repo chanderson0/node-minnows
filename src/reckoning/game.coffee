@@ -38,7 +38,6 @@ define (require) ->
       console.log "replaying from #{frame}, simulation at #{@frame}/#{@time}"
       t = state.time
       while frame <= stopFrame
-        console.log 'replaying', frame
         newState = state.clone t
 
         @applyCommands frame, newState

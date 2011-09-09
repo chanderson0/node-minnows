@@ -43,7 +43,6 @@ define(function(require) {
       console.log("replaying from " + frame + ", simulation at " + this.frame + "/" + this.time);
       t = state.time;
       while (frame <= stopFrame) {
-        console.log('replaying', frame);
         newState = state.clone(t);
         this.applyCommands(frame, newState);
         this.history.set(frame, newState);

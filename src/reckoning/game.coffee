@@ -25,8 +25,8 @@ define (require) ->
 
       @state = new State @time, new Scene({})
 
-      @history = new CircularBuffer 100
-      @commands = new CircularBuffer 100
+      @history = new CircularBuffer 500
+      @commands = new CircularBuffer 500
 
       @timeStep = 1000 / 60.0
       @replayNeeded = false

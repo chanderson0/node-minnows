@@ -31,8 +31,8 @@ define(function(require) {
       this.accumulator = 0;
       this.frame = 0;
       this.state = new State(this.time, new Scene({}));
-      this.history = new CircularBuffer(100);
-      this.commands = new CircularBuffer(100);
+      this.history = new CircularBuffer(500);
+      this.commands = new CircularBuffer(500);
       this.timeStep = 1000 / 60.0;
       this.replayNeeded = false;
     }

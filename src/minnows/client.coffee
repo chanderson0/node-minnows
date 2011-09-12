@@ -56,7 +56,7 @@ define (require) ->
   setup = (history, commands) ->
     game = new Reckoning.Game serverTime(),
       sceneType: Minnows.MinnowsScene
-      renderBehind: 2
+      renderBehind: 5
 
     game.history = history
     game.commands = commands

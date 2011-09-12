@@ -1,10 +1,8 @@
 express = require('express')
 app = express.createServer()
 io = require('socket.io').listen(app)
-# redis = require('redis')
-# client = redis.createClient()
 requirejs = require('requirejs')
-_u = require('underscore')
+_u = require('underscore')._
 
 # Configure socket.io
 io.configure 'production', ->
@@ -25,43 +23,29 @@ app.listen process.env.PORT || process.env.C9_PORT || 3000
 require('coffee-script')
 requirejs.config 
   nodeRequire: require
+  baseUrl: './build'
     
 # Run Game
-requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows'],
+requirejs ['reckoning/reckoning', 'minnows/minnows'],
   (Reckoning, Minnows) ->
-    game = new Reckoning.Game
-    bless = Reckoning.Bless
+    game = new Reckoning.Game null,
+      sceneType: Minnows.MinnowsScene
 
-    SerializationMap = {
-    'CircularBuffer': 'CircularBuffer',
-    }
-    for key, obj of Reckoning
-      SerializationMap[key] = obj
-    for key, obj of Minnows
-      SerializationMap[key] = obj
+    SerializationMap = Reckoning.Serializable.buildMap Reckoning, Minnows
 
-    setInterval(()->
+    setInterval( ->
       game.tick()
     , 100)
 
-    # Initial values for redis
-    # client.set 'players',   '0'
-    # client.set 'player_id', '0'
     player_ids = 0
 
     io.sockets.on 'connection', (socket) ->
       interval = null
-
-      # Setup
-      # client.incr 'players'
-      # player_id = null
-      # client.incr 'player_id', (err, id) ->
-      #   player_id = id
       player_id = player_ids++
 
       # Client ready
       socket.on 'nick', (data, fn) ->
-        bless.deserialize data, SerializationMap
+        Reckoning.Serializable.deserialize data, SerializationMap
 
         # Add this player to the simulation
         player = data.player
@@ -86,7 +70,7 @@ requirejs ['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows']
       broadcast_t = _u.throttle broadcast, 40
 
       socket.on 'mouse', (data) ->
-        bless.deserialize data, SerializationMap
+        Reckoning.Serializable.deserialize data, SerializationMap
 
         # console.log 'recieved command at', data.time, 'curr time', +new Date()
 

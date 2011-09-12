@@ -1,0 +1,1 @@
+define(function(){return{uuid:function(){var a,b,c,d,e;a="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(""),e=Array(36),d=0;for(b=0;b<=36;b++)switch(b){case 8:case 13:case 18:case 23:e[b]="-";break;case 14:e[b]="4";break;default:d<=2&&(d=33554432+Math.random()*16777216|0),c=d&15,d=d>>4,e[b]=a[b===19?c&3|8:c]}return e.join("")}}})

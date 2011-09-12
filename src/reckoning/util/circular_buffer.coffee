@@ -1,7 +1,7 @@
 define (require) ->
   Serializable = require('../serializable')
 
-  return class CircularBuffer extends Serializable
+  class CircularBuffer extends Serializable
     __type: 'CircularBuffer'
 
     constructor: (n) ->

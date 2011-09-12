@@ -17,6 +17,3 @@ define ->
           uuid[digit] = chars[if digit == 19 then (r & 0x3) | 0x8 else r]
 
     uuid.join('')
-  
-  serializePt: (pt) ->
-    { x: Math.round(pt.x), y: Math.round(pt.y) }

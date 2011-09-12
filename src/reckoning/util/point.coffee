@@ -20,7 +20,7 @@ define ->
     @getLength: (x, y) ->
       Math.sqrt(x * x + y * y)
 
-    @normalize: (x, y, length) ->
+    @normalize: (x, y, length = 1) ->
       current = @getLength x, y
       scale = if current != 0 then length / current else 0
       return { x: x * scale, y: y * scale }

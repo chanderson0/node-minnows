@@ -4,7 +4,7 @@
   app = express.createServer();
   io = require('socket.io').listen(app);
   requirejs = require('requirejs');
-  _u = require('underscore');
+  _u = require('underscore')._;
   io.configure('production', function() {
     io.enable('browser client minification');
     io.enable('browser client etag');
@@ -16,23 +16,15 @@
   app.listen(process.env.PORT || process.env.C9_PORT || 3000);
   require('coffee-script');
   requirejs.config({
-    nodeRequire: require
+    nodeRequire: require,
+    baseUrl: './build'
   });
-  requirejs(['public/js/app/reckoning/reckoning', 'public/js/app/minnows/minnows'], function(Reckoning, Minnows) {
-    var SerializationMap, bless, game, key, obj, player_ids;
-    game = new Reckoning.Game;
-    bless = Reckoning.Bless;
-    SerializationMap = {
-      'CircularBuffer': 'CircularBuffer'
-    };
-    for (key in Reckoning) {
-      obj = Reckoning[key];
-      SerializationMap[key] = obj;
-    }
-    for (key in Minnows) {
-      obj = Minnows[key];
-      SerializationMap[key] = obj;
-    }
+  requirejs(['reckoning/reckoning', 'minnows/minnows'], function(Reckoning, Minnows) {
+    var SerializationMap, game, player_ids;
+    game = new Reckoning.Game(null, {
+      sceneType: Minnows.MinnowsScene
+    });
+    SerializationMap = Reckoning.Serializable.buildMap(Reckoning, Minnows);
     setInterval(function() {
       return game.tick();
     }, 100);
@@ -43,7 +35,7 @@
       player_id = player_ids++;
       socket.on('nick', function(data, fn) {
         var join, player;
-        bless.deserialize(data, SerializationMap);
+        Reckoning.Serializable.deserialize(data, SerializationMap);
         player = data.player;
         console.log("" + player_id + " joined");
         join = new Minnows.JoinCommand(+new Date(), player_id, player);
@@ -68,7 +60,7 @@
       broadcast_t = _u.throttle(broadcast, 40);
       socket.on('mouse', function(data) {
         var mouse;
-        bless.deserialize(data, SerializationMap);
+        Reckoning.Serializable.deserialize(data, SerializationMap);
         mouse = new Minnows.MouseCommand(data.time, player_id, data.dest.x, data.dest.y);
         game.addCommand(mouse);
         data.id = player_id;

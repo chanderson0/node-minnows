@@ -23,7 +23,7 @@ app.listen process.env.PORT || process.env.C9_PORT || 3000
 require('coffee-script')
 requirejs.config 
   nodeRequire: require
-  baseUrl: './build'
+  baseUrl: __dirname + '/build'
     
 # Run Game
 requirejs ['reckoning/reckoning', 'minnows/minnows'],

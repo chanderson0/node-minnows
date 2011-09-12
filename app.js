@@ -17,7 +17,7 @@
   require('coffee-script');
   requirejs.config({
     nodeRequire: require,
-    baseUrl: './build'
+    baseUrl: __dirname + '/build'
   });
   requirejs(['reckoning/reckoning', 'minnows/minnows'], function(Reckoning, Minnows) {
     var SerializationMap, game, player_ids;

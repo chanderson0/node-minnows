@@ -9514,7 +9514,7 @@ define('minnows/client',['require','reckoning/reckoning','minnows/minnows','unde
     move = new Minnows.MouseCommand(serverTime(), id, pos.x, pos.y);
     game.addCommand(move);
     clearTimeout(mouseTimeout);
-    setTimeout(function() {
+    mouseTimeout = setTimeout(function() {
       return sendmove(pos);
     }, 25);
     return sendmove_t(pos);

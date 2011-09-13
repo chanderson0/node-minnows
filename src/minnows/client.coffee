@@ -47,7 +47,7 @@ define (require) ->
     game.addCommand move
 
     clearTimeout(mouseTimeout)
-    setTimeout(->
+    mouseTimeout = setTimeout(->
       sendmove(pos)
     , 25)
 

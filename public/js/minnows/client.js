@@ -9471,7 +9471,7 @@ define('minnows/client',['require','reckoning/reckoning','minnows/minnows','unde
   id = null;
   game = null;
   ping = 0;
-  serverOffset = new Reckoning.CircularBuffer(5);
+  serverOffset = new Reckoning.CircularBuffer(50);
   serverDelta = function() {
     var count, i, sum;
     i = serverOffset.firstIndex();
@@ -9508,7 +9508,7 @@ define('minnows/client',['require','reckoning/reckoning','minnows/minnows','unde
       }
     });
   };
-  sendmove_t = _u.throttle(sendmove, 20);
+  sendmove_t = _u.throttle(sendmove, 5);
   domove = function(pos) {
     var move;
     move = new Minnows.MouseCommand(serverTime(), id, pos.x, pos.y);

@@ -14,7 +14,7 @@ define (require) ->
   id = null
   game = null
   ping = 0
-  serverOffset = new Reckoning.CircularBuffer 5
+  serverOffset = new Reckoning.CircularBuffer 50
   serverDelta = ->
     i = serverOffset.firstIndex()
     sum = 0
@@ -40,7 +40,7 @@ define (require) ->
   mouseTimeout = null
   sendmove = (pos) ->
     socket.emit 'mouse', { time: serverTime(), dest: { x: pos.x, y: pos.y } }
-  sendmove_t = _u.throttle sendmove, 20
+  sendmove_t = _u.throttle sendmove, 5
 
   domove = (pos) ->
     move = new Minnows.MouseCommand serverTime(), id, pos.x, pos.y

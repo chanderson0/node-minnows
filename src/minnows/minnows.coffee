@@ -2,6 +2,10 @@ define (require) ->
   Reckoning = require 'reckoning/reckoning'
   Point = Reckoning.Point
 
+  windowSize = 
+    height: 384
+    width: 576
+
   class JoinCommand extends Reckoning.Command
     __type: 'JoinCommand'
 
@@ -66,6 +70,20 @@ define (require) ->
 
     clone: ->
       new Player @x, @y, @vx, @vy, @rotation, @destx, @desty, @radius
+
+    setPos: (x, y) ->
+      if x + @radius > windowSize.width
+        x = windowSize.width - @radius
+      else if x - @radius < 0
+        x = @radius
+      
+      if y + @radius > windowSize.height
+        y = windowSize.height - @radius
+      else if y - @radius < 0
+        y = @radius
+
+      super x, y
+      
 
     approach: (dt) ->
       return if not @destx? or not @desty?

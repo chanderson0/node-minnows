@@ -1405,9 +1405,13 @@ var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, par
   return child;
 };
 define('minnows/minnows',['require','reckoning/reckoning'],function(require) {
-  var JoinCommand, LeaveCommand, MinnowsScene, MouseCommand, Player, PlayerView, Point, PositionCommand, Reckoning;
+  var JoinCommand, LeaveCommand, MinnowsScene, MouseCommand, Player, PlayerView, Point, PositionCommand, Reckoning, windowSize;
   Reckoning = require('reckoning/reckoning');
   Point = Reckoning.Point;
+  windowSize = {
+    height: 384,
+    width: 576
+  };
   JoinCommand = (function() {
     __extends(JoinCommand, Reckoning.Command);
     JoinCommand.prototype.__type = 'JoinCommand';
@@ -1536,6 +1540,19 @@ define('minnows/minnows',['require','reckoning/reckoning'],function(require) {
     }
     Player.prototype.clone = function() {
       return new Player(this.x, this.y, this.vx, this.vy, this.rotation, this.destx, this.desty, this.radius);
+    };
+    Player.prototype.setPos = function(x, y) {
+      if (x + this.radius > windowSize.width) {
+        x = windowSize.width - this.radius;
+      } else if (x - this.radius < 0) {
+        x = this.radius;
+      }
+      if (y + this.radius > windowSize.height) {
+        y = windowSize.height - this.radius;
+      } else if (y - this.radius < 0) {
+        y = this.radius;
+      }
+      return Player.__super__.setPos.call(this, x, y);
     };
     Player.prototype.approach = function(dt) {
       var dir, dist, to_move;
@@ -9491,7 +9508,7 @@ define('minnows/client',['require','reckoning/reckoning','minnows/minnows','unde
       }
     });
   };
-  sendmove_t = _u.throttle(sendmove, 1);
+  sendmove_t = _u.throttle(sendmove, 20);
   domove = function(pos) {
     var move;
     move = new Minnows.MouseCommand(serverTime(), id, pos.x, pos.y);
@@ -9548,7 +9565,6 @@ define('minnows/client',['require','reckoning/reckoning','minnows/minnows','unde
     rtt = now - earlier;
     ping = rtt / 2.0;
     delta = server - earlier - ping;
-    console.log(now, earlier, server, ping, delta);
     return serverOffset.push(delta);
   };
   determineTime = function() {

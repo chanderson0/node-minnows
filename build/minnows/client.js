@@ -46,7 +46,7 @@ define(function(require) {
       }
     });
   };
-  sendmove_t = _u.throttle(sendmove, 1);
+  sendmove_t = _u.throttle(sendmove, 20);
   domove = function(pos) {
     var move;
     move = new Minnows.MouseCommand(serverTime(), id, pos.x, pos.y);
@@ -103,7 +103,6 @@ define(function(require) {
     rtt = now - earlier;
     ping = rtt / 2.0;
     delta = server - earlier - ping;
-    console.log(now, earlier, server, ping, delta);
     return serverOffset.push(delta);
   };
   determineTime = function() {

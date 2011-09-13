@@ -40,7 +40,7 @@ define (require) ->
   mouseTimeout = null
   sendmove = (pos) ->
     socket.emit 'mouse', { time: serverTime(), dest: { x: pos.x, y: pos.y } }
-  sendmove_t = _u.throttle sendmove, 1
+  sendmove_t = _u.throttle sendmove, 20
 
   domove = (pos) ->
     move = new Minnows.MouseCommand serverTime(), id, pos.x, pos.y
@@ -90,7 +90,7 @@ define (require) ->
     ping = rtt / 2.0
     delta = server - earlier - ping
 
-    console.log now, earlier, server, ping, delta
+    # console.log now, earlier, server, ping, delta
     serverOffset.push delta
 
   determineTime = ->
